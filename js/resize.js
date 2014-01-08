@@ -27,13 +27,13 @@
     init: function() {
       this.currentBreakpoint = this.getCurrentBreakpoint();
       this.gather();
-      return this.bind();
+      this.bind();
     },
 
     bind: function() {
       var _this = this;
-      return $(window).smartresize(function() {
-        return _this.refreshImages();
+      $(window).smartresize(function() {
+        _this.refreshImages();
       });
     },
 
@@ -71,7 +71,7 @@
 
     refreshImages: function() {
       if (this.testBreakpointChange()) {
-        return this.gather();
+        this.gather();
       }
     },
 
@@ -83,49 +83,34 @@
         el = els[_i];
         this.add(el);
       }
-      return this.grabFromServer();
+      this.grabFromServer();
     },
 
     add: function(image) {
       image = $(image);
-      return this.images.push({
+      this.images.push({
         src: image.attr("data-src"),
         width: image.width()
       });
     },
 
     buildQuery: function() {
-      var addText, data, img, _i, _len, _ref,
-        _this = this;
-      addText = function(img, text) {
-        return text += "image[]=" + img.src + "&width[]=" + img.width + "&";
-      };
-      data = "";
-      _ref = this.images;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        img = _ref[_i];
-        data = addText(img, data);
-      }
-      return data = data.slice(0, -1);
+      var image = { image: this.images }
+      return $.param(image);
     },
 
     grabFromServer: function() {
       var data,
         _this = this;
       data = this.buildQuery();
-      return $.ajax({
-        type: "GET",
-        url: "resize.php",
-        data: data,
-        success: function(data) {
+      $.get("resize.php", data, function(data) {
           var image, _i, _len;
           for (_i = 0, _len = data.length; _i < _len; _i++) {
             image = data[_i];
             _this.loadImage(image);
           }
-          return true;
         }
-      });
+      );
     },
 
     loadImage: function(image) {
@@ -135,11 +120,11 @@
       img = $("<img />");
       img.attr("src", image.src).attr("alt", el.attr("data-alt"));
       if (el.children("img").length) {
-        return el.children("img").attr("src", image.src);
+        el.children("img").attr("src", image.src);
       } else {
-        return img.load(function() {
+        img.load(function() {
           el.append(img);
-          return el.addClass('img-loaded');
+          el.addClass('img-loaded');
         });
       }
     }

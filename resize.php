@@ -46,12 +46,13 @@ function closest($search, $arr) {
 $images = array();
 
 if (isset($_GET['image'])) {
-    foreach ($_GET['image'] as $key => $src) {
+    foreach ($_GET['image'] as $key => $imageArr) {
 
         // Error suppression
-        if ($src != "" && $src != "/") {
+        if (isset($imageArr["src"]) && $imageArr["src"] != "" && $imageArr["src"] != "/") {
       	    // get image width
-      	    $width = (int) $_GET['width'][$key];
+      	    $width = (int) $imageArr['width'];
+            $src = $imageArr['src'];
 
             // Get the full path for the image
             if (substr($src,0,7) == "http://") {
