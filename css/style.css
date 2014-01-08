@@ -1,0 +1,31 @@
+html {
+  font-size: 62.5%;
+}
+body {
+  text-align: center;
+}
+.img-wrap {
+  display: inline-block;
+  width: 10em;
+  margin: 0.66em;
+}
+.img-wrap img {
+  max-width: 100%;
+  display: block;
+  width: 100%;
+}
+@media screen and (min-width: 48em) {
+  .img-wrap {
+    width: 15em;
+  }
+}
+@media screen and (min-width: 62em) {
+  .img-wrap {
+    width: 20em;
+  }
+}
+@media screen and (min-width: 76em) {
+  .img-wrap {
+    width: 24em;
+  }
+}
