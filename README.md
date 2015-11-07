@@ -1,3 +1,7 @@
+NOT MAINTAINED
+==============
+I recommend you use a suggested solution from http://responsiveimages.org/ as this technique is outdated.
+
 Crispy resize
 =============
 Crispy resize is a responsive images plugin that uses PHP-GD and ajax to lazy load the correct image size for the display width.
