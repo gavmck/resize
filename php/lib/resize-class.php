@@ -30,12 +30,12 @@
 			private $path;
 
 			function __construct($fileName, $width, $cache) {
-				
+
 				$this->src = $fileName;
                 $this->newWidth = $width;
                 $this->cache = $cache;
 				$this->path = $this->setPath($width);
-				               
+
 				$this->imageType = exif_imagetype($fileName);
 
 				switch($this->imageType)
@@ -98,7 +98,7 @@
 				$image = $this->src;
 
 		    	$this->imageType = exif_imagetype($image);
-		    	
+
 		    	if (substr($image,0,7) == "http://") {
 		    		$h = get_headers($image, 1);
 
@@ -120,7 +120,7 @@
 			public function resizeImage() {
 				if (!file_exists($this->path)) {
 					$this->image = $this->openImage($this->src);
-					
+
 					// *** Get width and height
 				    if ($this->image) {
 					    $this->width  = imagesx($this->image);
@@ -132,8 +132,25 @@
 
 					// *** Resample - create image canvas of x, y size
 					$this->imageResized = imagecreatetruecolor($this->newWidth, $newHeight);
+
+					// Preserve transparency
+					if ($this->imagetype == (IMAGETYPE_PNG || IMAGETYPE_GIF)) {
+						$transparent_index = imagecolortransparent($this->image);
+						if ($transparent_index >= 0) {  // GIF
+							imagepalettecopy($this->image, $this->imageResized);
+							imagefill($this->imageResized, 0, 0, $transparent_index);
+							imagecolortransparent($this->imageResized, $transparent_index);
+							imagetruecolortopalette($this->imageResized, true, 256);
+						} else { // PNG
+							imagealphablending($this->imageResized, false);
+							imagesavealpha($this->imageResized,true);
+							$transparent = imagecolorallocatealpha($this->imageResized, 255, 255, 255, 127);
+							imagefilledrectangle($this->imageResized, 0, 0, $this->width, $this->height, $transparent);
+						}
+					}
+
 					imagecopyresampled($this->imageResized, $this->image, 0, 0, 0, 0, $this->newWidth, $newHeight, $this->width, $this->height);
-				
+
 					return $this->saveImage($this->newWidth);
 				} else {
 					return $this->path;
@@ -144,7 +161,7 @@
 			## --------------------------------------------------------
 
 			public function saveImage($newWidth) {
-				
+
 				switch($this->imageType) {
 					case IMAGETYPE_JPEG:
 						if (imagetypes() & IMG_JPG) {
